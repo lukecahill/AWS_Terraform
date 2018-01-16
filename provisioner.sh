@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+# This is assuming that the user is using Ubuntu
 sudo atp-get update -y
 sudo apt-get install -y java
 

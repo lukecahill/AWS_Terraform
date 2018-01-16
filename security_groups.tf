@@ -1,3 +1,4 @@
+# Create a default security group which allows all traffic out
 resource "aws_security_group" "default_sg" {
   name        = "allow_all"
   description = "Allow all inbound traffic"
@@ -14,6 +15,7 @@ resource "aws_security_group" "default_sg" {
   }
 }
 
+# Add a rule to the defined SG, which allows all traffic in (not recommended)
 resource "aws_security_group_rule" "allow_all" {
     type = "ingress"
     from_port = 0
