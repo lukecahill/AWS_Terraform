@@ -24,13 +24,29 @@ resource "aws_internet_gateway" "gateway" {
     }
 }
 
-# Exolicitly associate the subnet with the main routing table
-data "aws_route_table" "main_routes" {
-    subnet_id = "${aws_subnet.main_subnet.id}"
+# ROUTING TABLES ----------------------
+resource "aws_route_table" "routes" {
+    vpc_id = "${aws_vpc.main.id}"
+    tags {
+        Name = "Main routing table"
+    }
 }
 
-# Create a route and add it to the main routing table
-resource "aws_route" "main_route" {
-    route_table_id = "${data.aws_route_table.main_routes.id}"
-    destination_cidr_block = "10.0.0.0/16"
+# Adds destination CIDR block to general internet
+resource "aws_route" "route" {
+    route_table_id = "${aws_route_table.routes.id}"
+    destination_cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.gateway.id}"
+}
+
+# Associates the routes with the VPC
+resource "aws_main_route_table_association" "r" {
+    route_table_id = "${aws_route_table.routes.id}"
+    vpc_id = "${aws_vpc.main.id}"
+}
+
+# Explicity associate the subnet with the route table
+resource "aws_route_table_association" "assoc_a" {
+    subnet_id = "${aws_subnet.main_subnet.id}"
+    route_table_id = "${aws_route_table.routes.id}"
 }
